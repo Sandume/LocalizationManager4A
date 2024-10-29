@@ -19,14 +19,6 @@ namespace LocalizationManagerTool
             InitializeComponent();
             Translations = new ObservableCollection<Translation>();
             dataGrid.ItemsSource = Translations;
-
-            foreach (string column in Columns)
-            {
-                DataGridTextColumn textColumn = new DataGridTextColumn();
-                textColumn.Header = column;
-                textColumn.Binding = new Binding(column);
-                dataGrid.Columns.Add(textColumn);
-            }
         }
 
         #region buttons
