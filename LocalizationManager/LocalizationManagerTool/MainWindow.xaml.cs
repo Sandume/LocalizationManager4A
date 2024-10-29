@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
@@ -12,18 +13,6 @@ namespace LocalizationManagerTool
 
     public partial class MainWindow : Window
     {
-
-        public class Translation
-        {
-            public string Id { get; set; }
-            public string En { get; set; }
-            public string Fr { get; set; }
-            public string Es { get; set; }
-            public string Ja { get; set; }
-        }
-
-        public List<string> Columns = new List<string>();
-        public ObservableCollection<Translation> Translations { get; set; }
 
         public MainWindow()
         {
@@ -62,6 +51,7 @@ namespace LocalizationManagerTool
                 {
                     ImportXml(filePath);
                 }
+                dataGrid.Items.Refresh();
             }
         }
 
@@ -69,8 +59,6 @@ namespace LocalizationManagerTool
         {
             if (dataGrid.SelectedItem is Translation selectedTranslation)
             {
-                // Créer une fenêtre d'édition ou utiliser des champs de texte pour modifier les valeurs
-                // Exemple simple d'édition avec MessageBox
                 MessageBox.Show($"Éditez les valeurs pour : {selectedTranslation.Id}");
             }
             else
@@ -170,23 +158,28 @@ namespace LocalizationManagerTool
         {
             try
             {
-                var lines = File.ReadAllLines(filePath);
-                Translations.Clear();
-                foreach (var line in lines.Skip(1))
+                using (StreamReader reader = new StreamReader(filePath))
                 {
-                    var values = line.Split(',');
-                    if (values.Length == 5)
+                    Translations.Clear();
+                    string headerLine = reader.ReadLine(); // Lire la ligne d'en-tête
+
+                    while (!reader.EndOfStream)
                     {
-                        Translations.Add(new Translation
+                        string[] values = reader.ReadLine().Split(','); // Assurez-vous que le séparateur est correct
+                        if (values.Length == 5)
                         {
-                            Id = values[0],
-                            En = values[1],
-                            Fr = values[2],
-                            Es = values[3],
-                            Ja = values[4]
-                        });
+                            Translations.Add(new Translation
+                            {
+                                Id = values[0],
+                                En = values[1],
+                                Fr = values[2],
+                                Es = values[3],
+                                Ja = values[4]
+                            });
+                        }
                     }
                 }
+                MessageBox.Show($"Importé {Translations.Count} traductions."); // Vérification
             }
             catch (Exception ex)
             {

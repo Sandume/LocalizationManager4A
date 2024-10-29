@@ -17,7 +17,15 @@
             <Button Content="Exporter C++ Header" Click="ExportCppHeaderButton_Click"/>
             <Button Content="Exporter C++ Source" Click="ExportCppSourceButton_Click"/>
         </Menu>
-        <DataGrid Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,22,0,0"/>
+        <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" Margin="0,22,0,0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Binding="{Binding Id}" />
+                <DataGridTextColumn Header="En" Binding="{Binding En}" />
+                <DataGridTextColumn Header="Fr" Binding="{Binding Fr}" />
+                <DataGridTextColumn Header="Es" Binding="{Binding Es}" />
+                <DataGridTextColumn Header="Ja" Binding="{Binding Ja}" />
+            </DataGrid.Columns>
+        </DataGrid>
 
     </Grid>
 </Window>
