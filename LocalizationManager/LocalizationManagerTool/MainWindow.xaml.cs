@@ -1,13 +1,10 @@
-﻿using System.Text;
+﻿using Newtonsoft.Json;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Xml.Linq; 
+
 
 namespace LocalizationManagerTool
 {
@@ -15,7 +12,6 @@ namespace LocalizationManagerTool
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
-    /// tu peux commit qlq chose stp léo 
     public partial class MainWindow : Window
     {
         public List<string> Columns = new List<string>();
@@ -41,12 +37,74 @@ namespace LocalizationManagerTool
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
+            openFileDialog.Filter = "CSV files (*.csv)|*.csv|JSON files (*.json)|*.json|XML files (*.xml)|*.xml";
 
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string filePath = openFileDialog.FileName;
+
+                if (filePath.EndsWith(".csv"))
+                {
+                    ImportCsv(filePath);
+                }
+                else if (filePath.EndsWith(".json"))
+                {
+                    ImportJson(filePath);
+                }
+                else if (filePath.EndsWith(".xml"))
+                {
+                    ImportXml(filePath);
+                }
+            }
         }
 
         private void Button_Edit(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void ImportCsv(string filePath)
+        {
+            var lines = File.ReadAllLines(filePath);
+            foreach (var line in lines)
+            {
+                var values = line.Split(',');
+                // Crée un objet avec ces valeurs et ajoute-le à la source de données
+            }
+        }
+
+        private void ImportJson(string filePath)
+        {
+            var jsonData = File.ReadAllText(filePath);
+            var translations = JsonConvert.DeserializeObject<List<Translation>>(jsonData);
+            // Remplis ta DataGrid avec ces traductions
+        }
+
+        public class Translation
+        {
+            public string Id { get; set; }
+            public string En { get; set; }
+            public string Fr { get; set; }
+            public string Es { get; set; }
+            public string Ja { get; set; }
+        }
+
+        private void ImportXml(string filePath)
+        {
+            XDocument xDoc = XDocument.Load(filePath);
+            foreach (var element in xDoc.Descendants("translation"))
+            {
+                var translation = new Translation
+                {
+                    Id = element.Element("id")?.Value,
+                    En = element.Element("en")?.Value,
+                    Fr = element.Element("fr")?.Value,
+                    Es = element.Element("es")?.Value,
+                    Ja = element.Element("ja")?.Value
+                };
+                // Ajoute ce modèle à la source de données
+            }
         }
     }
 }
