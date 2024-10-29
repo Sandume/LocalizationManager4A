@@ -123,17 +123,44 @@ namespace LocalizationManagerTool
 
         private void ExportClassButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "Csharp files (*.cs)|*.cs",
+                FileName = "translations.cs"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                ExportClass(saveFileDialog.FileName);
+            }
         }
 
         private void ExportCppHeaderButton_Click(object sender, RoutedEventArgs e)
         {
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "Header files (*.h)|*.g",
+                FileName = "translations.h"
+            };
 
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                ExportCppHeader(saveFileDialog.FileName);
+            }
         }
 
         private void ExportCppSourceButton_Click(object sender, RoutedEventArgs e)
         {
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "JSON files (*.cpp)|*.cpp",
+                FileName = "translations.cpp"
+            };
 
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                ExportCppSource(saveFileDialog.FileName);
+            }
         }
 
         #endregion
