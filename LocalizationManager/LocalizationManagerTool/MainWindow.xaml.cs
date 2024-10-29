@@ -4,15 +4,12 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Xml.Linq; 
+using System.Xml.Linq;
 
 
 namespace LocalizationManagerTool
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    /// 
+
     public partial class MainWindow : Window
     {
 
@@ -36,7 +33,6 @@ namespace LocalizationManagerTool
 
             foreach (string column in Columns)
             {
-                //Pour ajouter une colonne à notre datagrid
                 DataGridTextColumn textColumn = new DataGridTextColumn();
                 textColumn.Header = column;
                 textColumn.Binding = new Binding(column);
@@ -71,7 +67,16 @@ namespace LocalizationManagerTool
 
         private void Button_Edit(object sender, RoutedEventArgs e)
         {
-
+            if (dataGrid.SelectedItem is Translation selectedTranslation)
+            {
+                // Créer une fenêtre d'édition ou utiliser des champs de texte pour modifier les valeurs
+                // Exemple simple d'édition avec MessageBox
+                MessageBox.Show($"Éditez les valeurs pour : {selectedTranslation.Id}");
+            }
+            else
+            {
+                MessageBox.Show("Veuillez sélectionner une traduction à éditer.");
+            }
         }
 
         private void ExportCsvButton_Click(object sender, RoutedEventArgs e)
@@ -134,7 +139,7 @@ namespace LocalizationManagerTool
         {
             var saveFileDialog = new Microsoft.Win32.SaveFileDialog
             {
-                Filter = "Header files (*.h)|*.g",
+                Filter = "Header files (*.h)|*.h",
                 FileName = "translations.h"
             };
 
@@ -166,7 +171,7 @@ namespace LocalizationManagerTool
             try
             {
                 var lines = File.ReadAllLines(filePath);
-                Translations.Clear(); 
+                Translations.Clear();
                 foreach (var line in lines.Skip(1))
                 {
                     var values = line.Split(',');
