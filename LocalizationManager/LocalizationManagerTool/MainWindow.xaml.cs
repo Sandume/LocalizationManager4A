@@ -32,12 +32,7 @@ namespace LocalizationManagerTool
         {
             InitializeComponent();
             Translations = new ObservableCollection<Translation>();
-            dataGrid.ItemsSource = Translations; // Lier le DataGrid à la liste de traductions
-            Columns.Add("id");
-            Columns.Add("en");
-            Columns.Add("fr");
-            Columns.Add("es");
-            Columns.Add("ja");
+            dataGrid.ItemsSource = Translations;
 
             foreach (string column in Columns)
             {
@@ -125,7 +120,7 @@ namespace LocalizationManagerTool
         {
             var saveFileDialog = new Microsoft.Win32.SaveFileDialog
             {
-                Filter = "Csharp files (*.cs)|*.cs",
+                Filter = "CS files (*.cs)|*.cs",
                 FileName = "translations.cs"
             };
 
