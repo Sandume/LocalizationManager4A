@@ -14,6 +14,8 @@ namespace LocalizationManagerTool
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
+    /// tu peux commit qlq chose stp léo 
     public partial class MainWindow : Window
     {
         public List<string> Columns = new List<string>();
