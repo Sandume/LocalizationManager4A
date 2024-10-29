@@ -10,6 +10,12 @@
         <Menu VerticalAlignment="Top" Height="22">
             <Button Content="File" Click="Button_Click"/>
             <Button Content="Edit" Click="Button_Edit"/>
+            <Button Content="Exporter CSV" Click="ExportCsvButton_Click"/>
+            <Button Content="Exporter JSON" Click="ExportJsonButton_Click"/>
+            <Button Content="Exporter XML" Click="ExportXmlButton_Click"/>
+            <Button Content="Exporter C# Class" Click="ExportClassButton_Click"/>
+            <Button Content="Exporter C++ Header" Click="ExportCppHeaderButton_Click"/>
+            <Button Content="Exporter C++ Source" Click="ExportCppSourceButton_Click"/>
         </Menu>
         <DataGrid Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,22,0,0"/>
 
