@@ -44,17 +44,8 @@ namespace LocalizationManagerTool
             }
         }
 
-        private void Button_Edit(object sender, RoutedEventArgs e)
-        {
-            if (dataGrid.SelectedItem is Translation selectedTranslation)
-            {
-                MessageBox.Show($"Éditez les valeurs pour : {selectedTranslation.Id}");
-            }
-            else
-            {
-                MessageBox.Show("Veuillez sélectionner une traduction à éditer.");
-            }
-        }
+
+
 
         private void ExportCsvButton_Click(object sender, RoutedEventArgs e)
         {

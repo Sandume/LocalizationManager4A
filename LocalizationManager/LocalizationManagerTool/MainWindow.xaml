@@ -9,7 +9,6 @@
     <Grid VerticalAlignment="Top" Margin="0,0,0,-1">
         <Menu VerticalAlignment="Top" Height="22">
             <MenuItem Header="File" Click="Button_Click"/>
-            <MenuItem Header="Edit" Click="Button_Edit"/>
             <MenuItem Header="Export">
                 <MenuItem Header="Exporter CSV" Click="ExportCsvButton_Click"/>
                 <MenuItem Header="Exporter JSON" Click="ExportJsonButton_Click"/>
