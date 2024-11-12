@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Xml.Linq;
 
 
@@ -19,6 +21,19 @@ namespace LocalizationManagerTool
         }
 
         #region buttons
+
+        // Gestion de la touche "Suppr"
+        private void DataGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete && dataGrid.SelectedItem != null)
+            {
+                if (dataGrid.SelectedItem is Translation selectedTranslation)
+                {
+                    Translations.Remove(selectedTranslation);
+                }
+            }
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
