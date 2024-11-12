@@ -251,7 +251,7 @@ public class Translations
 ";
             foreach (var translation in Translations)
             {
-                classContent += $"        {{ \"{translation.Id}\", \"{translation.En}\" }},\n";
+                classContent += $" {{ \"{translation.Id}\", \"{translation.En}\", \"{ translation.Fr}\", \"{translation.Es}\", \"{translation.Ja}\"}},\n";
             }
             classContent += @"
     };
@@ -289,7 +289,7 @@ std::map<std::string, std::string> Translations::TranslationData = {
 ";
             foreach (var translation in Translations)
             {
-                sourceContent += $"    {{ \"{translation.Id}\", \"{translation.En}\" }},\n";
+                sourceContent += $"    {{ \"{translation.Id}\", \"{translation.En}\", \"{translation.Fr}\", \"{translation.Es}\", \"{translation.Ja}\"}},\n";
             }
             sourceContent += @"};
 ";
