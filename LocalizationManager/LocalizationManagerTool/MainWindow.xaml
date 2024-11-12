@@ -9,6 +9,7 @@
     <Grid VerticalAlignment="Top" Margin="0,0,0,-1">
         <Menu VerticalAlignment="Top" Height="22">
             <MenuItem Header="File" Click="Button_Click"/>
+            <MenuItem Header="Ajouter une langue" Click="AddLanguageMenuItem_Click" />
             <MenuItem Header="Export">
                 <MenuItem Header="Exporter CSV" Click="ExportCsvButton_Click"/>
                 <MenuItem Header="Exporter JSON" Click="ExportJsonButton_Click"/>
@@ -21,10 +22,6 @@
         <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" Margin="0,22,0,0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id" Binding="{Binding Id}" />
-                <DataGridTextColumn Header="En" Binding="{Binding En}" />
-                <DataGridTextColumn Header="Fr" Binding="{Binding Fr}" />
-                <DataGridTextColumn Header="Es" Binding="{Binding Es}" />
-                <DataGridTextColumn Header="Ja" Binding="{Binding Ja}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

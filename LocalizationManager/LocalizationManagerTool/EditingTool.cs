@@ -7,14 +7,9 @@ namespace LocalizationManagerTool
         public class Translation
         {
             public string Id { get; set; }
-            public string En { get; set; }
-            public string Fr { get; set; }
-            public string Es { get; set; }
-            public string Ja { get; set; }
+            public Dictionary<string, string> Languages { get; set; } = new Dictionary<string, string>();
         }
-
-        public List<string> Columns = new List<string> { "Id", "En", "Fr", "Es", "Ja" };
-        public ObservableCollection<Translation> Translations { get; set; }
+        public ObservableCollection<Translation> Translations { get; set; } = new ObservableCollection<Translation>();
 
     }
 }

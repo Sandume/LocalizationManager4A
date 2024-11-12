@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "0",
+    "Languages": {
+      "it": "holla",
+      "en": "hello",
+      "fr": "salut"
+    }
+  },
+  {
+    "Id": "1",
+    "Languages": {
+      "fr": "patte",
+      "en": "spagetti",
+      "it": "pasta"
+    }
+  }
+]

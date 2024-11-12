@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml.Linq;
 
@@ -22,7 +23,6 @@ namespace LocalizationManagerTool
 
         #region buttons
 
-        // Gestion de la touche "Suppr"
         private void DataGrid_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete && dataGrid.SelectedItem != null)
@@ -31,6 +31,69 @@ namespace LocalizationManagerTool
                 {
                     Translations.Remove(selectedTranslation);
                 }
+            }
+        }
+
+        private void UpdateDataGridColumns()
+        {
+            dataGrid.Columns.Clear();
+
+            DataGridTextColumn idColumn = new DataGridTextColumn
+            {
+                Header = "Id",
+                Binding = new Binding("Id")
+            };
+            dataGrid.Columns.Add(idColumn);
+
+            if (Translations.Count > 0)
+            {
+                foreach (string language in Translations.First().Languages.Keys)
+                {
+                    DataGridTextColumn languageColumn = new DataGridTextColumn
+                    {
+                        Header = language,
+                        Binding = new Binding($"Languages[{language}]")
+                    };
+                    dataGrid.Columns.Add(languageColumn);
+                }
+            }
+        }
+
+        private void AddLanguage(string languageCode)
+        {
+            if (Translations.Any() && Translations.First().Languages.ContainsKey(languageCode))
+            {
+                MessageBox.Show($"La langue '{languageCode}' existe déjà.");
+                return;
+            }
+
+            foreach (var translation in Translations)
+            {
+                translation.Languages[languageCode] = string.Empty; 
+            }
+
+            if (Translations.Count == 0)
+            {
+                var tempTranslation = new Translation { Id = "Temp" };  
+                tempTranslation.Languages[languageCode] = string.Empty;
+                Translations.Add(tempTranslation);
+            }
+
+            UpdateDataGridColumns();
+
+            dataGrid.Items.Refresh();
+        }
+
+        private void AddLanguageMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            string newLanguageCode = Microsoft.VisualBasic.Interaction.InputBox(
+                "Entrez le code de la nouvelle langue (par exemple : 'It' pour Italien) :",
+                "Ajouter une langue",
+                "");
+
+            if (!string.IsNullOrWhiteSpace(newLanguageCode))
+            {
+                AddLanguage(newLanguageCode);
             }
         }
 
@@ -73,6 +136,7 @@ namespace LocalizationManagerTool
             if (saveFileDialog.ShowDialog() == true)
             {
                 ExportCsv(saveFileDialog.FileName);
+                MessageBox.Show("Fichier CSV exporté avec succès !");
             }
         }
 
@@ -87,6 +151,7 @@ namespace LocalizationManagerTool
             if (saveFileDialog.ShowDialog() == true)
             {
                 ExportJson(saveFileDialog.FileName);
+                MessageBox.Show("Fichier JSON exporté avec succès !");
             }
         }
 
@@ -101,6 +166,7 @@ namespace LocalizationManagerTool
             if (saveFileDialog.ShowDialog() == true)
             {
                 ExportXml(saveFileDialog.FileName);
+                MessageBox.Show("Fichier XML exporté avec succès !");
             }
         }
 
@@ -115,6 +181,7 @@ namespace LocalizationManagerTool
             if (saveFileDialog.ShowDialog() == true)
             {
                 ExportClass(saveFileDialog.FileName);
+                MessageBox.Show("Fichier CS exporté avec succès !");
             }
         }
 
@@ -129,6 +196,7 @@ namespace LocalizationManagerTool
             if (saveFileDialog.ShowDialog() == true)
             {
                 ExportCppHeader(saveFileDialog.FileName);
+                MessageBox.Show("Fichier H exporté avec succès !");
             }
         }
 
@@ -143,6 +211,7 @@ namespace LocalizationManagerTool
             if (saveFileDialog.ShowDialog() == true)
             {
                 ExportCppSource(saveFileDialog.FileName);
+                MessageBox.Show("Fichier CPP exporté avec succès !");
             }
         }
 
@@ -151,41 +220,51 @@ namespace LocalizationManagerTool
         #region CSV
         private void ImportCsv(string filePath)
         {
-            try
-            {
-                using (StreamReader reader = new StreamReader(filePath))
-                {
-                    Translations.Clear();
-                    string headerLine = reader.ReadLine(); // Lire la ligne d'en-tête
+            var lines = File.ReadAllLines(filePath);
+            var headers = lines[0].Split(',');
 
-                    while (!reader.EndOfStream)
-                    {
-                        string[] values = reader.ReadLine().Split(','); // Assurez-vous que le séparateur est correct
-                        if (values.Length == 5)
-                        {
-                            Translations.Add(new Translation
-                            {
-                                Id = values[0],
-                                En = values[1],
-                                Fr = values[2],
-                                Es = values[3],
-                                Ja = values[4]
-                            });
-                        }
-                    }
-                }
-                MessageBox.Show($"Importé {Translations.Count} traductions."); // Vérification
-            }
-            catch (Exception ex)
+            Translations.Clear();
+
+            for (int i = 1; i < lines.Length; i++)
             {
-                MessageBox.Show($"Erreur lors de l'importation : {ex.Message}");
+                var values = lines[i].Split(',');
+                var translation = new Translation
+                {
+                    Id = values[0]
+                };
+
+                for (int j = 1; j < headers.Length; j++)
+                {
+                    translation.Languages[headers[j]] = values[j];
+                }
+
+                Translations.Add(translation);
             }
+
+            UpdateDataGridColumns();
         }
 
         private void ExportCsv(string filePath)
         {
-            var lines = new List<string> { "id,en,fr,es,ja" };
-            lines.AddRange(Translations.Select(t => $"{t.Id},{t.En},{t.Fr},{t.Es},{t.Ja}"));
+            var lines = new List<string>();
+
+            var headers = new List<string> { "Id" };
+            if (Translations.Any())
+            {
+                headers.AddRange(Translations.First().Languages.Keys);
+            }
+            lines.Add(string.Join(",", headers));
+
+            foreach (var translation in Translations)
+            {
+                var values = new List<string> { translation.Id };
+
+                values.AddRange(headers.Skip(1).Select(lang =>
+                    translation.Languages.ContainsKey(lang) ? translation.Languages[lang] : string.Empty));
+
+                lines.Add(string.Join(",", values));
+            }
+
             File.WriteAllLines(filePath, lines);
         }
         #endregion
@@ -193,53 +272,83 @@ namespace LocalizationManagerTool
         #region json
         private void ImportJson(string filePath)
         {
-            var jsonData = File.ReadAllText(filePath);
-            var translations = JsonConvert.DeserializeObject<List<Translation>>(jsonData);
-            Translations.Clear();
-            foreach (var translation in translations)
+            string jsonContent = File.ReadAllText(filePath);
+
+            var importedTranslations = JsonConvert.DeserializeObject<List<Translation>>(jsonContent);
+
+            if (importedTranslations != null)
             {
-                Translations.Add(translation);
+                Translations.Clear();
+                foreach (var translation in importedTranslations)
+                {
+                    Translations.Add(translation);
+                }
+
+                dataGrid.Items.Refresh();
+            }
+            else
+            {
+                MessageBox.Show("Erreur lors de l'importation du fichier JSON.");
             }
         }
 
         private void ExportJson(string filePath)
         {
-            var jsonData = JsonConvert.SerializeObject(Translations, Formatting.Indented);
-            File.WriteAllText(filePath, jsonData);
+            var json = JsonConvert.SerializeObject(Translations, Formatting.Indented);
+            File.WriteAllText(filePath, json);
         }
         #endregion
 
         #region Xmls
         private void ImportXml(string filePath)
         {
-            XDocument xDoc = XDocument.Load(filePath);
+            XDocument xmlDocument = XDocument.Load(filePath);
+
             Translations.Clear();
-            foreach (var element in xDoc.Descendants("translation"))
+
+            foreach (var translationElement in xmlDocument.Descendants("Translation"))
             {
-                var translation = new Translation
+                string id = translationElement.Element("Id")?.Value ?? string.Empty;
+
+                var languages = new Dictionary<string, string>();
+                var languagesElement = translationElement.Element("Languages");
+                if (languagesElement != null)
                 {
-                    Id = element.Element("id")?.Value,
-                    En = element.Element("en")?.Value,
-                    Fr = element.Element("fr")?.Value,
-                    Es = element.Element("es")?.Value,
-                    Ja = element.Element("ja")?.Value
-                };
-                Translations.Add(translation);
+                    foreach (var languageElement in languagesElement.Elements())
+                    {
+                        string key = languageElement.Name.LocalName;
+                        string value = languageElement.Value;
+                        languages[key] = value;
+                    }
+                }
+
+                Translations.Add(new Translation
+                {
+                    Id = id,
+                    Languages = languages
+                });
             }
         }
 
         private void ExportXml(string filePath)
         {
-            var xDoc = new XDocument(new XElement("translations",
-                Translations.Select(t => new XElement("translation",
-                    new XElement("id", t.Id),
-                    new XElement("en", t.En),
-                    new XElement("fr", t.Fr),
-                    new XElement("es", t.Es),
-                    new XElement("ja", t.Ja)
-                ))
-            ));
-            xDoc.Save(filePath);
+            XElement root = new XElement("Translations");
+
+            foreach (var translation in Translations)
+            {
+                XElement translationElement = new XElement("Translation");
+                translationElement.Add(new XElement("Id", translation.Id));
+                XElement languagesElement = new XElement("Languages");
+                foreach (var language in translation.Languages)
+                {
+                    languagesElement.Add(new XElement(language.Key, language.Value));
+                }
+
+                translationElement.Add(languagesElement);
+                root.Add(translationElement);
+            }
+            XDocument xmlDocument = new XDocument(root);
+            xmlDocument.Save(filePath);
         }
 
         #endregion
@@ -252,18 +361,29 @@ using System.Collections.Generic;
 
 public class Translations
 {
-    public static Dictionary<string, string> TranslationData = new Dictionary<string, string>
+    public static Dictionary<string, Dictionary<string, string>> TranslationData = new Dictionary<string, Dictionary<string, string>>
     {
 ";
+
             foreach (var translation in Translations)
             {
-                classContent += $"      {{ \"{translation.Id}\", \"{translation.En}\", \"{ translation.Fr}\", \"{translation.Es}\", \"{translation.Ja}\"}},\n";
+                classContent += $"        {{ \"{translation.Id}\", new Dictionary<string, string> {{ ";
+
+                foreach (var language in translation.Languages)
+                {
+                    classContent += $"{{ \"{language.Key}\", \"{language.Value}\" }}, ";
+                }
+
+                classContent = classContent.TrimEnd(',', ' ') + " }},\n";
             }
+
             classContent += @"
     };
 }";
+
             File.WriteAllText(filePath, classContent);
         }
+
         #endregion
 
         #region exportCPP
@@ -279,7 +399,7 @@ public class Translations
 class Translations
 {
 public:
-    static std::map<std::string, std::string> TranslationData;
+    static std::map<std::string, std::map<std::string, std::string>> TranslationData;
 };
 
 #endif // TRANSLATIONS_H";
@@ -291,12 +411,21 @@ public:
             var sourceContent = @"
 #include ""Translations.h""
 
-std::map<std::string, std::string> Translations::TranslationData = {
+std::map<std::string, std::map<std::string, std::string>> Translations::TranslationData = {
 ";
+
             foreach (var translation in Translations)
             {
-                sourceContent += $"    {{ \"{translation.Id}\", \"{translation.En}\", \"{translation.Fr}\", \"{translation.Es}\", \"{translation.Ja}\"}},\n";
+                sourceContent += $"    {{ \"{translation.Id}\", {{";  
+
+                foreach (var language in translation.Languages)
+                {
+                    sourceContent += $"{{ \"{language.Key}\", \"{language.Value}\" }}, ";
+                }
+
+                sourceContent = sourceContent.TrimEnd(',', ' ') + " }},\n";
             }
+
             sourceContent += @"};
 ";
             File.WriteAllText(Path.ChangeExtension(filePath, ".cpp"), sourceContent);
