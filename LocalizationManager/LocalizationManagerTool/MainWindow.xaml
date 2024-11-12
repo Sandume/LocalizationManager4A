@@ -8,14 +8,16 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid VerticalAlignment="Top" Margin="0,0,0,-1">
         <Menu VerticalAlignment="Top" Height="22">
-            <Button Content="File" Click="Button_Click"/>
-            <Button Content="Edit" Click="Button_Edit"/>
-            <Button Content="Exporter CSV" Click="ExportCsvButton_Click"/>
-            <Button Content="Exporter JSON" Click="ExportJsonButton_Click"/>
-            <Button Content="Exporter XML" Click="ExportXmlButton_Click"/>
-            <Button Content="Exporter C# Class" Click="ExportClassButton_Click"/>
-            <Button Content="Exporter C++ Header" Click="ExportCppHeaderButton_Click"/>
-            <Button Content="Exporter C++ Source" Click="ExportCppSourceButton_Click"/>
+            <MenuItem Header="File" Click="Button_Click"/>
+            <MenuItem Header="Edit" Click="Button_Edit"/>
+            <MenuItem Header="Export">
+                <MenuItem Header="Exporter CSV" Click="ExportCsvButton_Click"/>
+                <MenuItem Header="Exporter JSON" Click="ExportJsonButton_Click"/>
+                <MenuItem Header="Exporter XML" Click="ExportXmlButton_Click"/>
+                <MenuItem Header="Exporter C# Class" Click="ExportClassButton_Click"/>
+                <MenuItem Header="Exporter C++ Header" Click="ExportCppHeaderButton_Click"/>
+                <MenuItem Header="Exporter C++ Source" Click="ExportCppSourceButton_Click"/>
+            </MenuItem>
         </Menu>
         <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" Margin="0,22,0,0">
             <DataGrid.Columns>
@@ -26,6 +28,5 @@
                 <DataGridTextColumn Header="Ja" Binding="{Binding Ja}" />
             </DataGrid.Columns>
         </DataGrid>
-
     </Grid>
 </Window>
